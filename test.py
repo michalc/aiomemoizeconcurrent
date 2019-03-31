@@ -7,8 +7,8 @@ from unittest.mock import (
     call,
 )
 
-from aiodeduplicate import (
-    deduplicate_concurrent,
+from aiomemoizeconcurrent import (
+    memoize_concurrent,
 )
 
 
@@ -37,7 +37,7 @@ def until_called(num_times):
 class TestDeduplicate(TestCase):
 
     @async_test
-    async def test_identical_concurrent_deduplicated_coroutine(self):
+    async def test_identical_concurrent_memoized_coroutine(self):
         loop = asyncio.get_event_loop()
         mock = Mock()
 
@@ -47,10 +47,10 @@ class TestDeduplicate(TestCase):
             await asyncio.sleep(0)
             return 'value'
 
-        deduplicated = deduplicate_concurrent(func)
+        memoized = memoize_concurrent(func)
 
-        task_a = asyncio.ensure_future(deduplicated(10, 20, a='val_a', b='val_b'))
-        task_b = asyncio.ensure_future(deduplicated(10, 20, a='val_a', b='val_b'))
+        task_a = asyncio.ensure_future(memoized(10, 20, a='val_a', b='val_b'))
+        task_b = asyncio.ensure_future(memoized(10, 20, a='val_a', b='val_b'))
 
         task_a_result = await task_a
         task_b_result = await task_b
@@ -59,7 +59,7 @@ class TestDeduplicate(TestCase):
         self.assertEqual(mock.mock_calls, [call(10, 20, a='val_a', b='val_b')])
 
     @async_test
-    async def test_identical_concurrent_deduplicated_future(self):
+    async def test_identical_concurrent_memoized_future(self):
         loop = asyncio.get_event_loop()
         mock = Mock()
         future = asyncio.Future()
@@ -68,10 +68,10 @@ class TestDeduplicate(TestCase):
             mock(*args, **kwargs)
             return future
 
-        deduplicated = deduplicate_concurrent(func)
+        memoized = memoize_concurrent(func)
 
-        task_a = asyncio.ensure_future(deduplicated(10, 20, a='val_a', b='val_b'))
-        task_b = asyncio.ensure_future(deduplicated(10, 20, a='val_a', b='val_b'))
+        task_a = asyncio.ensure_future(memoized(10, 20, a='val_a', b='val_b'))
+        task_b = asyncio.ensure_future(memoized(10, 20, a='val_a', b='val_b'))
 
         await asyncio.sleep(0)
         future.set_result('value')
@@ -83,7 +83,7 @@ class TestDeduplicate(TestCase):
         self.assertEqual(mock.mock_calls, [call(10, 20, a='val_a', b='val_b')])
 
     @async_test
-    async def test_different_concurrent_not_deduplicated(self):
+    async def test_different_concurrent_not_memoized(self):
         loop = asyncio.get_event_loop()
         mock = Mock()
         func_done = asyncio.Event()
@@ -94,10 +94,10 @@ class TestDeduplicate(TestCase):
             await until_called_twice()
             return 'value'
 
-        deduplicated = deduplicate_concurrent(func)
+        memoized = memoize_concurrent(func)
 
-        task_a = asyncio.ensure_future(deduplicated(10, 20, a='val_a', b='val_b'))
-        task_b = asyncio.ensure_future(deduplicated(10, 20, a='val_a', b='val_d'))
+        task_a = asyncio.ensure_future(memoized(10, 20, a='val_a', b='val_b'))
+        task_b = asyncio.ensure_future(memoized(10, 20, a='val_a', b='val_d'))
 
         task_a_result = await task_a
         task_b_result = await task_b
@@ -109,7 +109,7 @@ class TestDeduplicate(TestCase):
         ])
 
     @async_test
-    async def test_identical_sequential_not_deduplicated(self):
+    async def test_identical_sequential_not_memoized(self):
         loop = asyncio.get_event_loop()
         mock = Mock()
 
@@ -117,12 +117,12 @@ class TestDeduplicate(TestCase):
             mock(*args, **kwargs)
             return 'value'
 
-        deduplicated = deduplicate_concurrent(func)
+        memoized = memoize_concurrent(func)
 
-        task_a = asyncio.ensure_future(deduplicated(10, 20, a='val_a', b='val_b'))
+        task_a = asyncio.ensure_future(memoized(10, 20, a='val_a', b='val_b'))
         task_a_result = await task_a
 
-        task_b = asyncio.ensure_future(deduplicated(10, 20, a='val_a', b='val_b'))
+        task_b = asyncio.ensure_future(memoized(10, 20, a='val_a', b='val_b'))
 
         task_b_result = await task_b
         self.assertEqual(task_a_result, 'value')
@@ -133,7 +133,7 @@ class TestDeduplicate(TestCase):
         ])
 
     @async_test
-    async def test_identical_concurrent_deduplicated_exception(self):
+    async def test_identical_concurrent_memoized_exception(self):
         loop = asyncio.get_event_loop()
         mock = Mock()
 
@@ -143,10 +143,10 @@ class TestDeduplicate(TestCase):
             await asyncio.sleep(0)
             raise Exception('inner')
 
-        deduplicated = deduplicate_concurrent(func)
+        memoized = memoize_concurrent(func)
 
-        task_a = asyncio.ensure_future(deduplicated(10, 20, a='val_a', b='val_b'))
-        task_b = asyncio.ensure_future(deduplicated(10, 20, a='val_a', b='val_b'))
+        task_a = asyncio.ensure_future(memoized(10, 20, a='val_a', b='val_b'))
+        task_b = asyncio.ensure_future(memoized(10, 20, a='val_a', b='val_b'))
 
         with self.assertRaisesRegex(Exception, 'inner'):
             await task_a
@@ -157,7 +157,7 @@ class TestDeduplicate(TestCase):
         self.assertEqual(mock.mock_calls, [call(10, 20, a='val_a', b='val_b')])
 
     @async_test
-    async def test_identical_concurrent_deduplicated_cancelled(self):
+    async def test_identical_concurrent_memoized_cancelled(self):
         loop = asyncio.get_event_loop()
         mock = Mock()
         called = asyncio.Event()
@@ -167,10 +167,10 @@ class TestDeduplicate(TestCase):
             called.set()
             await asyncio.Future()
 
-        deduplicated = deduplicate_concurrent(func)
+        memoized = memoize_concurrent(func)
 
-        task_a = asyncio.ensure_future(deduplicated(10, 20, a='val_a', b='val_b'))
-        task_b = asyncio.ensure_future(deduplicated(10, 20, a='val_a', b='val_b'))
+        task_a = asyncio.ensure_future(memoized(10, 20, a='val_a', b='val_b'))
+        task_b = asyncio.ensure_future(memoized(10, 20, a='val_a', b='val_b'))
         await called.wait()
         task_a.cancel()
 
