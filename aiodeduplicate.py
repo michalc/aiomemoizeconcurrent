@@ -3,16 +3,16 @@ import asyncio
 
 def deduplicate_concurrent(func):
 
-    concurrent = {}
+    cache = {}
 
     async def deduplicated(*args, **kwargs):
-        identifier = (args, tuple(kwargs.items()))
+        key = (args, tuple(kwargs.items()))
 
         try:
-            future = concurrent[identifier]
+            future = cache[key]
         except KeyError:
             future = asyncio.Future()
-            concurrent[identifier] = future
+            cache[key] = future
 
             try:
                 result = await func(*args, **kwargs)
@@ -21,7 +21,7 @@ def deduplicate_concurrent(func):
             else:
                 future.set_result(result)
             finally:
-                del concurrent[identifier]
+                del cache[key]
 
         return await future
 
