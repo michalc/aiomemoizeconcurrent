@@ -49,10 +49,15 @@ Inside coro b
 ['a', 'a', 'b']
 ```
 
-This would typically be used to deduplicate a function making calls to an API, and if
+
+## Use cases
+
+This can be used to deduplicate a function making calls to an API, and if
 
 - you expect many concurrent calls;
 - identical concurrent calls are idempotent;
 - there are enough such calls that are identical to justify such a caching layer.
+
+It can also be used to avoid concurrency edge cases/race conditions with multiple tasks accessing shared resources. For example, multiple tasks may need to dynamically create shared UDP sockets. To ensure that this dynamic generation isn't called by multiple tasks at the same time for the same address, it can be wrapped with `deduplicate_concurrent`.
 
 The function `deduplicate_concurrent` works with both coroutines, and functions that return a future.
