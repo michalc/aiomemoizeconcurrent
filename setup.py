@@ -8,7 +8,7 @@ def long_description():
 
 setuptools.setup(
     name='aiodeduplicate',
-    version='0.0.4',
+    version='0.0.5',
     author='Michal Charemza',
     author_email='michal@charemza.name',
     description='Deduplicate concurrent asyncio Python function calls',
