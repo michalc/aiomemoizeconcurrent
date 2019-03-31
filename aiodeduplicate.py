@@ -1,5 +1,4 @@
 import asyncio
-import collections
 
 
 def deduplicate_concurrent(func):
