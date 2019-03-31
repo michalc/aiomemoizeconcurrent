@@ -1,4 +1,4 @@
-# aiomemoizeconcurrent [![CircleCI](https://circleci.com/gh/michalc/aiodeduplicate.svg?style=svg)](https://circleci.com/gh/michalc/aiodeduplicate) [![Test Coverage](https://api.codeclimate.com/v1/badges/5e70552f9dd435a18326/test_coverage)](https://codeclimate.com/github/michalc/aiodeduplicate/test_coverage)
+# aiomemoizeconcurrent [![CircleCI](https://circleci.com/gh/michalc/aiomemoizeconcurrent.svg?style=svg)](https://circleci.com/gh/michalc/aiomemoizeconcurrent) [![Test Coverage](https://api.codeclimate.com/v1/badges/5e70552f9dd435a18326/test_coverage)](https://codeclimate.com/github/michalc/aiomemoizeconcurrent/test_coverage)
 
 Memoize concurrent asyncio Python coroutine calls. This offers short-lived memoization: for any given set of arguments, the cache lasts only for the length of a single call.
 
