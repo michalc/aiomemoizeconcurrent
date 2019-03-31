@@ -1,11 +1,11 @@
 import asyncio
 
 
-def deduplicate_concurrent(func):
+def memoize_concurrent(func):
 
     cache = {}
 
-    async def deduplicated(*args, **kwargs):
+    async def cached(*args, **kwargs):
         key = (args, tuple(kwargs.items()))
 
         try:
@@ -25,4 +25,4 @@ def deduplicate_concurrent(func):
 
         return await future
 
-    return deduplicated
+    return cached

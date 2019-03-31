@@ -7,16 +7,16 @@ def long_description():
 
 
 setuptools.setup(
-    name='aiodeduplicate',
+    name='aiomemoizeconcurrent',
     version='0.0.5',
     author='Michal Charemza',
     author_email='michal@charemza.name',
-    description='Deduplicate concurrent asyncio Python function calls',
+    description='Memoize concurrent asyncio Python function calls',
     long_description=long_description(),
     long_description_content_type='text/markdown',
-    url='https://github.com/michalc/aiodeduplicate',
+    url='https://github.com/michalc/aiomemoizeconcurrent',
     py_modules=[
-        'aiodeduplicate',
+        'aiomemoizeconcurrent',
     ],
     python_requires='~=3.5',
     test_suite='test',
