@@ -5,7 +5,7 @@ def memoize_concurrent(func):
 
     cache = {}
 
-    async def cached(*args, **kwargs):
+    async def memoized(*args, **kwargs):
         key = (args, tuple(kwargs.items()))
 
         try:
@@ -25,4 +25,4 @@ def memoize_concurrent(func):
 
         return await future
 
-    return cached
+    return memoized
