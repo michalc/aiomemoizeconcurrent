@@ -8,9 +8,9 @@ def memoize_concurrent(func):
     async def memoized(*args, **kwargs):
         key = (args, tuple(kwargs.items()))
 
-        try:
+        if key in cache:
             future = cache[key]
-        except KeyError:
+        else:
             future = asyncio.Future()
             cache[key] = future
 
